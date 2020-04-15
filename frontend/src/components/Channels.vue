@@ -60,7 +60,11 @@ export default {
 		}
 	},
 	beforeCreate () {
-		console.log('got here');
+		if (!this.$store.state.user) {
+			const local = JSON.parse(localStorage.user);
+			this.$store.state.user = local.user._id;
+			axios.defaults.headers.common['Authorization'] = 'Bearer ' + local.token;
+		}
 		axios.get('http://localhost:3000/all_channels')
 		.then(response => {
 			this.channels = response.data
@@ -94,3 +98,4 @@ export default {
 						}
 }
 </script>
+
