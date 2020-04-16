@@ -15,6 +15,8 @@ router.post('/new_message', verifyToken, messageController.new_message);
 
 router.get('/get_messages/:id', verifyToken, channelController.get_messages);
 
+router.put('/add_to_channel', verifyToken, messageController.add_to_channel);
+
 router.post('/login', userController.login);
 
 router.post('/register', userController.register);

@@ -6,11 +6,22 @@ import routes from './routes'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import store from './store'
+import VueSocketIO from 'vue-socket.io'
 
 Vue.config.productionTip = false
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(VueRouter)
+
+Vue.use(new VueSocketIO({
+    debug: true,
+    connection: 'http://localhost:3000',
+    vuex: {
+        store,
+        actionPrefix: 'SOCKET_',
+        mutationPrefix: 'SOCKET_'
+    },
+}))
 
 const router = new VueRouter({routes});
 

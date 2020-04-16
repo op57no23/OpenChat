@@ -80,22 +80,29 @@ export default {
 			handleOk() {
 						axios.post('http://localhost:3000/new_channel', {name: this.form.channel}).then(response => {
 								this.channels.push(response.data);
+								this.$socket.emit('save_channel', response.data);
 						})
-					.catch(function (error) { console.log(error)});
-
+					.catch(function (error) { this.errors.push(error)});
 			},
 			get_channel(evt) {
+					const oldChannel = this.activeChannel;
 					this.activeChannel = evt.srcElement.id;
 					axios.get('http://localhost:3000/get_channel/' + evt.srcElement.id)
 					.then(response => {
 							this.$emit('change_channel', response.data);
+							this.$socket.emit('join', evt.srcElement.id, oldChannel);
 					})
 					.catch(e => {
 							this.errors.push(e);
 					})
 			}
 			
-						}
+						},
+	sockets: {
+		new_channel_created: function(data) {
+			this.channels.push(data);
+		}
+	}
 }
 </script>
 

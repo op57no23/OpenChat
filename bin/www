@@ -20,7 +20,19 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+var io = require('socket.io')(server)
 
+io.on('connect', socket => {
+  socket.on('save_channel', data => {
+    socket.broadcast.emit('new_channel_created', data);
+  })
+  socket.on('join', function(channel, oldChannel) {
+    if (oldChannel) {socket.leave(oldChannel);}
+    socket.join(channel);
+  })
+  socket.on('save_message', data => {
+    io.to(data.channel._id).emit('new_message_created', data.message)})
+})
 /**
  * Listen on provided port, on all network interfaces.
  */

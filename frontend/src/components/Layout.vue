@@ -17,7 +17,7 @@
   </b-row>
  <b-row id = "chatView">
 <b-col cols = "3"><Channels @change_channel="handler"></Channels></b-col>
-<b-col cols = "9"><Chat :channelMessages = "messages" :channel = "current_channel._id" :user = "user"></Chat></b-col>
+<b-col cols = "9"><Chat @new_message="new_message" :channelMessages = "messages" :channel = "current_channel._id" :user = "user"></Chat></b-col>
 
 </b-row>
  </b-container>  
@@ -58,8 +58,16 @@ export default {
 			logout: function() {
 				this.$store.dispatch('logout');
 				this.$router.push('register');
-			}
+			},
 
+			new_message: function(message) {
+				this.$socket.emit('save_message', {channel: this.current_channel, message: message});
+			}
+		},
+		sockets: {
+			new_message_created: function(message) {
+				this.messages.push(message);
+			}
 		}
 }
 
@@ -73,6 +81,15 @@ export default {
 
 #chatView {
 	max-height: 90vh;
+}
+
+.Channels {
+	max-height: 90vh;
+	overflow-y: scroll;
+}
+
+.Chat {
+	max-height:90vh;
 }
 
 

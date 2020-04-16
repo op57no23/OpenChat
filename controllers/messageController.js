@@ -8,10 +8,16 @@ exports.new_message = function(req, res) {
         if (err) { // if error, respond with 401 code
           res.sendStatus(401)
         } else {
-	console.log(req.body);
 	Message.create(req.body, function(err, message) {
 		if (err) res.json(err);
-		Channel.findOneAndUpdate({channel: message.channel}, {$push: {messages: message}});
+		res.json(message);
 	});
 }})};
+
+exports.add_to_channel = function(req, res) {
+	Channel.findOneAndUpdate({_id: req.body.data.channel}, {$push: {messages: req.body.data._id}}, {new: true}, function(err, channel) {
+		if (err) res.json(err);
+		res.json(channel.messages[channel.messages.length - 1]);
+	})
+}
 
