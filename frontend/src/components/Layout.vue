@@ -2,10 +2,11 @@
 <div class="Layout">
 <b-container>
 <b-row id = "nav">
- <b-navbar toggleable="lg" type="dark" variant="info">
+ <nav class = "navbar navbar-light bg-info">
+	<b-navbar-brand>Chatroom</b-navbar-brand>
       <!-- Right aligned nav items -->
-      <b-navbar-nav>
-        <b-nav-item-dropdown right>
+      <b-navbar-nav right>
+        <b-nav-item-dropdown>
           <!-- Using 'button-content' slot -->
           <template v-slot:button-content>
             <em>{{userName}}</em>
@@ -13,11 +14,14 @@
           <b-dropdown-item @click="logout">Sign Out</b-dropdown-item>
         </b-nav-item-dropdown>
       </b-navbar-nav>
-  </b-navbar>
+  </nav>
   </b-row>
  <b-row id = "chatView">
 <b-col cols = "3"><Channels @change_channel="handler"></Channels></b-col>
-<b-col cols = "9"><Chat @new_message="new_message" :channelMessages = "messages" :channel = "current_channel._id" :user = "user"></Chat></b-col>
+<b-col cols = "9">
+	<Chat v-if = "current_channel" @new_message="new_message" :channelMessages = "messages" :channel = "current_channel._id" :user = "user" :userName="userName"></Chat>
+	<h2 v-else>Please select a channel</h2>
+</b-col>
 
 </b-row>
  </b-container>  
@@ -35,7 +39,7 @@ export default {
 				return {
 						user: JSON.parse(localStorage.user).user._id,
 						userName: JSON.parse(localStorage.user).user.name,
-						current_channel: {},
+						current_channel: null,
 						messages: []
 				}
 		},
@@ -67,6 +71,12 @@ export default {
 		sockets: {
 			new_message_created: function(message) {
 				this.messages.push(message);
+
+				this.$nextTick(() => {
+					var container = this.$el.querySelector('.Chat .container');
+					container.scrollTop = container.scrollHeight;      
+				})
+
 			}
 		}
 }
@@ -78,19 +88,31 @@ export default {
 #nav {
 	height: 10vh;
 }
+	
+.navbar {
+	width: 100%;
+}
 
 #chatView {
+	height: 90vh;
+}
+
+#chatView * {
+	margin: auto;
 	max-height: 90vh;
 }
 
 .Channels {
-	max-height: 90vh;
 	overflow-y: scroll;
 }
-
-.Chat {
-	max-height:90vh;
+.col-9 {
+	height: 100%;
 }
 
+.col-9 h2 {
+	position: absolute;
+	top: 40%;
+	left: 30%;	
+}
 
 </style>

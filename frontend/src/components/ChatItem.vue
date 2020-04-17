@@ -1,18 +1,19 @@
 <template>
-<div class="ChatItem">
-	<b-row v-if="messageUser === user">
+<div class="ChatItem mt-2">
+	<b-row v-if="messageUser === user" id = "right">
 		<b-col cols = "6"></b-col>
-		<b-col cols = "6">
-			<small> Me </small>
+		<b-col cols = "6" @mouseover="hover=true" @mouseleave= "hover=false">
+			<small v-if="hover" class = "font-weight-bolder"> Me </small><br>
+			<small v-if="hover"> {{formatDate(messageDate)}}</small>
 			<p> {{messageText}} </p>
-			<small> {{messageDate}} </small>
+			
 		</b-col>
 	</b-row>
-	<b-row v-else>
-		<b-col cols = "6">
-			<small> {{messageUser}} </small>
+	<b-row v-else id = "left">
+		<b-col cols = "6" @mouseover="hover=true" @mouseleave= "hover=false"	>
+			<small class = "font-weight-bolder"> {{messageUserName}} </small><br>
+			<small v-if="hover"> {{formatDate(messageDate)}} </small>
 			<p> {{messageText}} </p>
-			<small> {{messageDate}} </small>
 		</b-col>
 		<b-col cols = "6"></b-col>
 	</b-row>
@@ -23,7 +24,18 @@
 <script>
 	
 	export default {
-			props: ['messageText', 'user', 'messageUser', 'messageDate']
+			data () {
+				return {
+					hover: false,
+				}
+			},
+			methods: {
+				formatDate: function(date) {
+					const dateString = new Date(date).toString().substring(4);
+					return /.*(?=:)/.exec(dateString).toString();
+				}
+			},
+			props: ['messageText', 'user', 'messageUser', 'messageDate', 'messageUserName']
 	}
 
 </script>
@@ -32,6 +44,14 @@
 
 .col {
 	min-width: 50%;
+}
+
+#right {
+	text-align: right;
+}
+
+#left {
+	text-align: left;
 }
 
 </style>

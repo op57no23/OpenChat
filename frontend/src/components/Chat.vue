@@ -1,9 +1,11 @@
 <template>
 <div class="Chat">
-<b-container>
-<ChatItem v-for="message in channelMessages" :key=message._id :messageUser="message.user" :user = "user" :messageText="message.text" :messageDate = "message.date"></ChatItem>
-<ChatBar @new_message = "new_message" :channel="channel" :user="user"></ChatBar>
+<b-container class = 'mt-4'>
+<ChatItem v-for="message in channelMessages" :key=message._id :messageUser="message.user" :user = "user" :messageText="message.text" :messageDate = "message.date" :messageUserName="message.userName"></ChatItem>
+
  </b-container>  
+<ChatBar @new_message = "new_message"  :channel="channel" :user="user" :userName="userName"></ChatBar>
+
 </div>
 </template>
 
@@ -16,11 +18,17 @@ export default {
 		components: {
 				ChatItem, ChatBar
 		},
-		props: ['channelMessages', 'channel', 'user'],
+		props: ['channelMessages', 'channel', 'user', 'userName'],
 		methods: {
 			new_message: function(message) {
 				this.$emit('new_message', message);
 			}
+		},
+		updated: function () {
+					this.$nextTick(() => {
+							var container = this.$el.querySelector('.container');
+							container.scrollTop = container.scrollHeight;      
+			})
 		}
 }
 
@@ -28,16 +36,23 @@ export default {
 
 <style>
 
-.container {
-	max-height: 100vh;
-}
-
-.Chat {
-	min-height: 80%;
+.Chat .container {
+	height: 90%;
 	overflow-y: scroll;
+	overflow-x: hidden;
 }
 
 .ChatBar {
+	height: 10%;
+	display: flex;
+	justify-content: center;
+}
 
+.Chat {
+	height: 100%;
+}
+
+.ChatBar form {
+	width: 100%;
 }
 </style>
